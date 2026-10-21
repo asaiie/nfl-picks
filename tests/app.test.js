@@ -17,6 +17,7 @@ else:
 c.commit();print(json.dumps({'results':rows,'meta':{'changes':changes}}))`,join(dir,'db.sqlite')],{input:JSON.stringify([sql,args,script]),encoding:'utf8'});if(result.status)throw Error(result.stderr);return JSON.parse(result.stdout)};
  const stmt=(sql,args=[])=>({bind(...a){return stmt(sql,a)},run:async()=>run(sql,args),all:async()=>run(sql,args),first:async()=>run(sql,args).results[0]||null});
  run(readFileSync(new URL('../migrations/0001.sql',import.meta.url),'utf8'),[],true);
+ run(readFileSync(new URL('../migrations/0003_player_names.sql',import.meta.url),'utf8'),[],true);
  return {run,prepare:sql=>stmt(sql),batch:async ss=>Promise.all(ss.map(s=>s.run()))};}
 const origin='https://nfl.amitsai.com';
 function request(DB,path,body,cookie,extra={}){return onRequest({env:{DB},request:new Request(origin+'/api/'+path,{method:body===undefined?'GET':'POST',headers:{Origin:origin,'Content-Type':'application/json',...(cookie?{Cookie:cookie}:{}),...extra},body:body===undefined?undefined:JSON.stringify(body)})})}

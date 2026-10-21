@@ -1,4 +1,4 @@
-export const PEOPLE = ['Amit', 'Amol', 'Garv', 'Praneeth', 'Daniel'];
+export const PEOPLE = ['Amit', 'Supreet', 'Nikhil', 'Shahzad', 'Kartik'];
 export const AFC = ['BAL','BUF','CIN','CLE','DEN','HOU','IND','JAX','KC','LAC','LV','MIA','NE','NYJ','PIT','TEN'];
 export const NFC = ['ARI','ATL','CAR','CHI','DAL','DET','GB','LAR','MIN','NO','NYG','PHI','SEA','SF','TB','WAS'];
 export const TEAMS = [...AFC,...NFC].sort();

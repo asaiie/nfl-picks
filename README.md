@@ -1,6 +1,6 @@
 # NFL Picks
 
-Five-person NFL picks for **nfl.amitsai.com**, starting Week 7 of the 2026 regular season. Vanilla JavaScript, Cloudflare Worker static assets, and a dedicated D1 database. Accounts: Amit (admin), Amol, Garv, Praneeth, Daniel. Same trusted-group first-login password setup as the NBA site; claim only your own name. Guests can read picks and accuracy; mutations require sign-in.
+Five-person NFL picks for **nfl.amitsai.com**, starting Week 7 of the 2026 regular season. Vanilla JavaScript, Cloudflare Worker static assets, and a dedicated D1 database. Accounts: Amit (admin), Supreet, Nikhil, Shahzad, Kartik. Same trusted-group first-login password setup as the NBA site; claim only your own name. Guests can read picks and accuracy; mutations require sign-in.
 
 ## Local development
 
@@ -22,7 +22,7 @@ npm run deploy
 
 Worker: `nfl-picks`. D1 binding: `DB`. Database ID: `974da02b-257a-4a1a-8bf8-e32e5987d278`. The custom domain is declared in Wrangler, which manages DNS and TLS. There are **no cron triggers or automatic results jobs**. Wrangler runs the asset build during deployment. For Workers Builds, deploy with `npx wrangler deploy`.
 
-Initialize schema and schedule before deploying a fresh database. Both SQL files are repeatable and preserve existing accounts, picks, results and schedule edits. No fixture passwords are deployed. Claim Amit first after launch. To recover the admin account, use the D1 console to clear user 1's password and delete their sessions, then claim it immediately.
+Initialize schema and schedule before deploying a fresh database. All SQL files are repeatable and preserve existing accounts, picks, results and schedule edits. No fixture passwords are deployed. Claim Amit first after launch. To recover the admin account, use the D1 console to clear user 1's password and delete their sessions, then claim it immediately.
 
 ## Rules
 
