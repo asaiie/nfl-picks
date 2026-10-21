@@ -1,0 +1,26 @@
+{
+  "name": "nfl-picks",
+  "compatibility_date": "2026-10-21",
+  "main": "worker.js",
+  "assets": {
+    "directory": "public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "build": {
+    "command": "npm run build"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "nfl-picks",
+      "database_id": "974da02b-257a-4a1a-8bf8-e32e5987d278"
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "nfl.amitsai.com",
+      "custom_domain": true
+    }
+  ]
+}
