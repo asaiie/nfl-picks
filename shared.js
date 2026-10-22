@@ -1,4 +1,4 @@
-export const PEOPLE = ['Amit', 'Supreet', 'Nikhil', 'Shahzad', 'Kartik'];
+export const PEOPLE = ['Abhay', 'Amit', 'Kartik', 'Nikhil', 'Shahzad', 'Supreet'];
 export const AFC = ['BAL','BUF','CIN','CLE','DEN','HOU','IND','JAX','KC','LAC','LV','MIA','NE','NYJ','PIT','TEN'];
 export const NFC = ['ARI','ATL','CAR','CHI','DAL','DET','GB','LAR','MIN','NO','NYG','PHI','SEA','SF','TB','WAS'];
 export const TEAMS = [...AFC,...NFC].sort();
@@ -20,5 +20,5 @@ export function standings(users,games,picks) {
   let correct=0,missed=0;
   for(const g of finals){const p=index.get(`${u.id}:${g.id}`);if(!p)missed++;else if(p.team===g.winner)correct++;}
   return {...u,correct,missed,total:finals.length,incorrect:finals.length-correct,accuracy:finals.length?correct/finals.length:null};
- }).sort((a,b)=>b.correct-a.correct||a.id-b.id);
+ }).sort((a,b)=>b.correct-a.correct||String(a.name||'').localeCompare(String(b.name||''))||a.id-b.id);
 }

@@ -1,6 +1,6 @@
 # NFL Picks
 
-Five-person NFL picks for **nfl.amitsai.com**, starting Week 7 of the 2026 regular season. Vanilla JavaScript, Cloudflare Worker static assets, and a dedicated D1 database. Accounts: Amit (admin), Supreet, Nikhil, Shahzad, Kartik. Same trusted-group first-login password setup as the NBA site; claim only your own name. Guests can read picks and accuracy; mutations require sign-in.
+Six-person NFL picks for **nfl.amitsai.com**, starting Week 7 of the 2026 regular season. Vanilla JavaScript, Cloudflare Worker static assets, and a dedicated D1 database. Accounts (alphabetical): Abhay, Amit (admin), Kartik, Nikhil, Shahzad, Supreet. Same trusted-group first-login password setup as the NBA site; claim only your own name. Guests can read picks and accuracy; mutations require sign-in.
 
 ## Local development
 

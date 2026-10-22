@@ -64,7 +64,7 @@ export async function onRequest({ request, env }) {
     const query = (sql, ...args) => db.prepare(sql).bind(...args);
     if (path === "accounts" && request.method === "GET") {
       const { results } = await query(
-        "SELECT id,name,password IS NOT NULL AS registered FROM users ORDER BY id",
+        "SELECT id,name,password IS NOT NULL AS registered FROM users ORDER BY name COLLATE NOCASE,id",
       ).all();
       return json(results);
     }
@@ -167,7 +167,7 @@ export async function onRequest({ request, env }) {
     if (path === "state" && request.method === "GET") {
       const [users, games, picks, predictions, outcomes] = await Promise.all(
         [
-          "SELECT id,name FROM users ORDER BY id",
+          "SELECT id,name FROM users ORDER BY name COLLATE NOCASE,id",
           "SELECT * FROM games ORDER BY tipoff,id",
           "SELECT * FROM picks",
           "SELECT * FROM predictions",
@@ -264,7 +264,7 @@ export async function onRequest({ request, env }) {
     }
     if (path === "admin/reset") {
       const id = Number(body.id);
-      if (![2, 3, 4, 5].includes(id))
+      if (![2, 3, 4, 5, 6].includes(id))
         return json({ error: "Only friend accounts can be reset here." }, 400);
       await db.batch([
         query("UPDATE users SET password=NULL WHERE id=?", id),

@@ -18,6 +18,7 @@ c.commit();print(json.dumps({'results':rows,'meta':{'changes':changes}}))`,join(
  const stmt=(sql,args=[])=>({bind(...a){return stmt(sql,a)},run:async()=>run(sql,args),all:async()=>run(sql,args),first:async()=>run(sql,args).results[0]||null});
  run(readFileSync(new URL('../migrations/0001.sql',import.meta.url),'utf8'),[],true);
  run(readFileSync(new URL('../migrations/0003_player_names.sql',import.meta.url),'utf8'),[],true);
+ run(readFileSync(new URL('../migrations/0004_add_abhay.sql',import.meta.url),'utf8'),[],true);
  return {run,prepare:sql=>stmt(sql),batch:async ss=>Promise.all(ss.map(s=>s.run()))};}
 const origin='https://nfl.amitsai.com';
 function request(DB,path,body,cookie,extra={}){return onRequest({env:{DB},request:new Request(origin+'/api/'+path,{method:body===undefined?'GET':'POST',headers:{Origin:origin,'Content-Type':'application/json',...(cookie?{Cookie:cookie}:{}),...extra},body:body===undefined?undefined:JSON.stringify(body)})})}
@@ -30,3 +31,18 @@ test('authentication, CSRF, identity isolation, locks, and account resets',async
 test('manual finals support shutouts, ties and corrections, preserve picks and never reopen',async t=>{const DB=database(t);const admin=await signIn(DB,1),friend=await signIn(DB,2);const g=insert(DB,'score',-3600000);DB.run('INSERT INTO picks VALUES(?,?,?,?)',[2,g.id,'KC',Date.now()-7200000]);const update=extra=>request(DB,'admin/game',{...g,status:'final',home_score:0,away_score:10,...extra},admin);assert.equal((await update({})).status,200);let saved=DB.run('SELECT * FROM games WHERE id=?',[g.id]).results[0];assert.equal(saved.winner,'DEN');assert.equal(saved.locked,1);assert.equal((await update({home_score:10})).status,200);assert.equal(DB.run('SELECT winner FROM games').results[0].winner,'TIE');assert.equal((await update({home_score:14})).status,200);assert.equal(DB.run('SELECT winner FROM games').results[0].winner,'KC');assert.equal((await update({home_score:''})).status,400);assert.equal((await update({home_score:-1})).status,400);assert.equal((await update({home_score:1.5})).status,400);assert.equal((await update({tipoff:Date.now()+3600000})).status,400);assert.equal((await update({away:'BUF'})).status,400);assert.equal((await update({status:'scheduled',tipoff:Date.now()+3600000})).status,200);assert.equal((await request(DB,'pick',{game_id:g.id,team:'DEN'},friend)).status,409);assert.equal(DB.run('SELECT team FROM picks').results[0].team,'KC');assert.equal(DB.run('SELECT home_score FROM games').results[0].home_score,null)});
 test('season choices enforce conferences and isolate authors; outcomes are admin only',async t=>{const DB=database(t);const a=await signIn(DB,1),b=await signIn(DB,2);assert.equal((await request(DB,'prediction',{category:'afc_champ',value:'PHI'},b)).status,400);assert.equal((await request(DB,'prediction',{category:'afc_champ',value:'BUF',user_id:1},b)).status,200);assert.equal(DB.run('SELECT user_id FROM predictions').results[0].user_id,2);assert.equal((await request(DB,'admin/outcome',{category:'champ',value:'BUF'},b)).status,403);assert.equal((await request(DB,'admin/outcome',{category:'champ',value:'BUF'},a)).status,200)});
 test('worker redirects insecure public traffic and has no scheduled handler',async()=>{const r=await worker.fetch(new Request('http://nfl.amitsai.com/api/pick'),{});assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://nfl.amitsai.com/api/pick');assert.equal(worker.scheduled,undefined)});
+
+test('Abhay can sign in, pick, and be reset; public lists are alphabetical',async t=>{
+ const DB=database(t),admin=await signIn(DB,1),abhay=await signIn(DB,6);
+ const expected=['Abhay','Amit','Kartik','Nikhil','Shahzad','Supreet'];
+ const state=await (await request(DB,'state')).json();
+ assert.deepEqual(state.users.map(u=>u.name),expected);
+ assert.deepEqual((await (await request(DB,'accounts')).json()).map(u=>u.name),expected);
+ assert.deepEqual(standings(state.users,[],[]).map(u=>u.name),expected);
+ const g=insert(DB,'abhay-pick');
+ assert.equal((await request(DB,'pick',{game_id:g.id,team:'KC'},abhay)).status,200);
+ assert.equal((await request(DB,'admin/reset',{id:6},abhay)).status,403);
+ assert.equal((await request(DB,'admin/reset',{id:6},admin)).status,200);
+ assert.equal((await request(DB,'pick',{game_id:g.id,team:'DEN'},abhay)).status,401);
+ assert.equal(DB.run('SELECT team FROM picks WHERE user_id=6').results[0].team,'KC');
+});
